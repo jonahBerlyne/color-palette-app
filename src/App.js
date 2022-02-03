@@ -1,4 +1,6 @@
 import db from "./firebase";
+import React, { useState, useEffect } from 'react';
+import { onSnapshot, collection } from "firebase/firestore";
 
 const Dot = ({color}) => {
   const style = {
@@ -13,19 +15,27 @@ const Dot = ({color}) => {
 }
 
 export default function App() {
+  const [colors, setColors] = useState([{name: "Loading...", id: "loading"}]);
+
+  console.log(colors);
+  useEffect(() => {
+    onSnapshot(collection(db, "colors"), (snapshot) => {
+      setColors(snapshot.docs.map(doc => ({...doc.data(), id: doc.id})));
+    });
+  }, []);
+
+
   return (
     <div className="root">
       <button className="button">New</button>
       <ul>
-        <li>
-          <a href="#">edit</a> <Dot color="#f00" /> Red
-        </li>
-        <li>
-          <a href="#">edit</a> <Dot color="#0f0" /> Green
-        </li>
-        <li>
-          <a href="#">edit</a> <Dot color="#00f" /> Blue
-        </li>
+        {colors.map(color => {
+          return (
+            <li key={color.id}>
+            <a href="#">edit</a> <Dot color={color.value} />{color.name}
+          </li>
+          );
+        })}
       </ul>
     </div>
   );
