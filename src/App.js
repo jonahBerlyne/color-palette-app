@@ -1,6 +1,6 @@
 import db from "./firebase";
 import React, { useState, useEffect } from 'react';
-import { onSnapshot, collection } from "firebase/firestore";
+import { onSnapshot, collection, setDoc, doc } from "firebase/firestore";
 
 const Dot = ({color}) => {
   const style = {
@@ -24,10 +24,17 @@ export default function App() {
     });
   }, []);
 
+  const handleNew = async () => {
+    const docRef = doc(db, "colors", "color001");
+    const payload = {name: "Black", value: "#000"};
+    // setDoc adds a new document to the collection in the cloud firestore
+    await setDoc(docRef, payload);
+  }
+
 
   return (
     <div className="root">
-      <button className="button">New</button>
+      <button className="button" onClick={handleNew}>New</button>
       <ul>
         {colors.map(color => {
           return (
