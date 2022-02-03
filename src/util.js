@@ -2,12 +2,13 @@ import db from "./firebase";
 import { 
     collection, 
     addDoc, 
-    setDoc, 
+    updateDoc, 
     doc, 
     deleteDoc, 
     query, 
     where, 
-    getDocs 
+    getDocs, 
+    serverTimestamp
 } from "firebase/firestore";  
   
 export const handleNew = async () => {
@@ -19,7 +20,7 @@ export const handleNew = async () => {
     const name = prompt("Enter a color:");
     const value = prompt("Enter the color's value:");
     const collectionRef = collection(db, "colors");
-    const payload = { name, value };
+    const payload = { name, value, timestamp: serverTimestamp() };
     const docRef = await addDoc(collectionRef, payload);
     console.log(`New id is: ${docRef.id}`);
 }
@@ -28,8 +29,8 @@ export const handleEdit = async (id) => {
  const docRef = doc(db, "colors", id);
  const name = prompt("Enter a color:");
  const value = prompt("Enter the color's value:");
- const payload = { name, value };
- setDoc(docRef, payload);
+ const payload = { name, value, timestamp: serverTimestamp() };
+ updateDoc(docRef, payload);
 }
 
 export const handleDelete = async (id) => {

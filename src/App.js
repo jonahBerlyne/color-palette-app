@@ -1,6 +1,6 @@
 import db from "./firebase";
 import React, { useState, useEffect } from 'react';
-import { onSnapshot, collection, setDoc, doc } from "firebase/firestore";
+import { onSnapshot, collection, setDoc, doc, query, orderBy } from "firebase/firestore";
 import { handleNew, handleEdit, handleDelete, handleQueryDelete } from "./util";
 import Dot from "./Dot";
 
@@ -8,10 +8,17 @@ export default function App() {
   const [colors, setColors] = useState([{name: "Loading...", id: "loading"}]);
 
   console.log(colors);
+
   useEffect(() => {
-    onSnapshot(collection(db, "colors"), (snapshot) => {
+    const collectionRef = collection(db, "colors");
+    const q = query(collectionRef, orderBy("timestamp", "desc"));
+
+
+    const unsub = onSnapshot(q, (snapshot) => {
       setColors(snapshot.docs.map(doc => ({...doc.data(), id: doc.id})));
     });
+
+    return unsub;
   }, []);
 
 
